@@ -112,7 +112,3 @@ Total runtime: ~5 minutes, dominated by API calls.
 ## Licence
 
 Data is from UN Comtrade and the World Bank, both public-domain / open. Scripts and analysis in this repository are released under the MIT licence.
-
-## Author
-
-Tanvi Parsam — IIT Delhi-Abu Dhabi, B.Tech CSE — Semester 4 Macroeconomics term paper (May 2026).
