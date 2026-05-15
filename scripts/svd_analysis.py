@@ -5,12 +5,18 @@ The first singular component should capture the dominant "China shock" pattern;
 subsequent components capture orthogonal patterns (Europe, US, recent diversification).
 """
 import time
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import requests
 
-OUT = "/Users/tanviparsam/Downloads/University/Semester4/Macroeconomics-Term_Paper"
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+CHARTS = ROOT / "charts"
+NOTES = ROOT / "notes"
+for p in (DATA, CHARTS, NOTES):
+    p.mkdir(exist_ok=True)
 URL = "https://comtradeapi.un.org/public/v1/preview/C/A/HS"
 
 # UN M49 -> readable name mapping for countries that show up in Chile's cherry exports
@@ -60,7 +66,7 @@ for y in range(2012, 2025):
 df = pd.DataFrame(rows)
 df = df[df["partner"] != 0]  # drop "World" aggregate
 df["partner_name"] = df["partner"].map(NAME).fillna(df["partner"].astype(str))
-df.to_csv(f"{OUT}/cherries_all_destinations.csv", index=False)
+df.to_csv(DATA / "cherries_all_destinations.csv", index=False)
 print(f"\nSaved cherries_all_destinations.csv ({len(df)} rows, {df['partner'].nunique()} unique partners)")
 
 # Pivot to (country x year) matrix
@@ -71,7 +77,7 @@ M = M[M.max(axis=1) > 1e5]
 print(f"After dropping tiny destinations: {M.shape}")
 print("\nTop 12 destinations by total 2010-2024 value (USD millions):")
 print((M.sum(axis=1).sort_values(ascending=False) / 1e6).head(12).to_string())
-M.to_csv(f"{OUT}/cherries_matrix.csv")
+M.to_csv(DATA / "cherries_matrix.csv")
 
 # --- SVD ---
 X = M.values  # countries x years
@@ -164,12 +170,12 @@ ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
 plt.suptitle("SVD of Chile's cherry-export matrix (countries × years), 2010–2024",
              fontsize=13, fontweight="bold", y=1.00)
 plt.tight_layout()
-plt.savefig(f"{OUT}/chart5_svd.png", dpi=180)
+plt.savefig(CHARTS / "chart5_svd.png", dpi=180)
 plt.close()
 print("\nSaved chart5_svd.png")
 
 # --- write a summary text file ---
-with open(f"{OUT}/SVD_RESULTS.md", "w") as f:
+with open(NOTES / "SVD_RESULTS.md", "w") as f:
     f.write("# SVD Results — Chile's Cherry Export Matrix\n\n")
     f.write(f"- Matrix: {X.shape[0]} destination countries × {X.shape[1]} years (2010-2024)\n")
     f.write(f"- 1st singular value: σ₁ = {S[0]:,.0f}\n")

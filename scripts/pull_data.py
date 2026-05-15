@@ -8,10 +8,13 @@ Saves everything as CSVs alongside this script.
 """
 
 import time
+from pathlib import Path
 import pandas as pd
 import requests
 
-OUT_DIR = "/Users/tanviparsam/Downloads/University/Semester4/Macroeconomics-Term_Paper"
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+DATA.mkdir(exist_ok=True)
 
 COMTRADE = "https://comtradeapi.un.org/public/v1/preview/C/A/HS"
 WB = "https://api.worldbank.org/v2"
@@ -94,7 +97,7 @@ def main():
 
     cherries = pd.concat([sweet_cn, sour_cn, old_cn, sweet_world, sour_world, old_world], ignore_index=True)
     cherries["partner_name"] = cherries["partner"].map({CHINA: "China", WORLD: "World"})
-    cherries.to_csv(f"{OUT_DIR}/cherries_raw.csv", index=False)
+    cherries.to_csv(DATA / "cherries_raw.csv", index=False)
     print(f"Saved cherries_raw.csv ({len(cherries)} rows)")
 
     pivot = (cherries.groupby(["year", "partner_name"], as_index=False)
@@ -103,7 +106,7 @@ def main():
     pivot_v.columns.name = None
     pivot_v = pivot_v.rename(columns={"China": "value_to_china_usd", "World": "value_to_world_usd"})
     pivot_v["china_share_pct"] = 100 * pivot_v["value_to_china_usd"] / pivot_v["value_to_world_usd"]
-    pivot_v.to_csv(f"{OUT_DIR}/cherries_summary.csv", index=False)
+    pivot_v.to_csv(DATA / "cherries_summary.csv", index=False)
     print(f"Saved cherries_summary.csv")
     print(pivot_v.to_string(index=False))
 
@@ -126,11 +129,11 @@ def main():
                 macro_rows.append({"country": name, "indicator": label, "year": row["year"], "value": row["value"]})
 
     macro = pd.DataFrame(macro_rows)
-    macro.to_csv(f"{OUT_DIR}/macro_raw.csv", index=False)
+    macro.to_csv(DATA / "macro_raw.csv", index=False)
     print(f"Saved macro_raw.csv ({len(macro)} rows)")
 
     wide = macro.pivot_table(index=["country", "year"], columns="indicator", values="value").reset_index()
-    wide.to_csv(f"{OUT_DIR}/macro_summary.csv", index=False)
+    wide.to_csv(DATA / "macro_summary.csv", index=False)
     print(f"Saved macro_summary.csv")
     print(wide.tail(20).to_string(index=False))
 

@@ -3,13 +3,17 @@ Monthly cherry trade: China imports from Chile, 2018-2025.
 Used to visualise the Lunar New Year seasonality.
 """
 import time
+from pathlib import Path
 import pandas as pd
 import requests
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.patches as mpatches
 
-OUT = "/Users/tanviparsam/Downloads/University/Semester4/Macroeconomics-Term_Paper"
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+CHARTS = ROOT / "charts"
+DATA.mkdir(exist_ok=True); CHARTS.mkdir(exist_ok=True)
 URL = "https://comtradeapi.un.org/public/v1/preview/C/M/HS"
 
 # Lunar New Year dates by year (approx — used to anchor the chart)
@@ -43,7 +47,7 @@ for year in range(2018, 2026):
 df = pd.DataFrame(rows)
 df["date"] = pd.to_datetime(df["period"], format="%Y%m")
 df = df.sort_values("date").reset_index(drop=True)
-df.to_csv(f"{OUT}/cherries_monthly.csv", index=False)
+df.to_csv(DATA / "cherries_monthly.csv", index=False)
 print(f"\nSaved cherries_monthly.csv ({len(df)} rows)")
 print(df.groupby("year")["value_usd"].sum().apply(lambda x: f"${x/1e6:,.0f}M").to_string())
 
@@ -66,7 +70,7 @@ lny_handle = mpatches.Patch(color="#1e6091", alpha=0.5, label="Lunar New Year da
 val_handle = mpatches.Patch(color="#a4243b", label="Monthly imports (USD M)")
 ax.legend(handles=[val_handle, lny_handle], loc="upper left", frameon=False)
 plt.tight_layout()
-plt.savefig(f"{OUT}/chart6_monthly_seasonality.png", dpi=180)
+plt.savefig(CHARTS / "chart6_monthly_seasonality.png", dpi=180)
 plt.close()
 print("Saved chart6_monthly_seasonality.png")
 
@@ -95,7 +99,7 @@ ax.annotate("Lunar New Year\nshipping window\n(harvest Dec–Feb)",
             fontsize=10, color="#555",
             bbox=dict(boxstyle="round", fc="#f4ecd8", ec="#aaa"))
 plt.tight_layout()
-plt.savefig(f"{OUT}/chart7_monthly_overlay.png", dpi=180)
+plt.savefig(CHARTS / "chart7_monthly_overlay.png", dpi=180)
 plt.close()
 print("Saved chart7_monthly_overlay.png")
 

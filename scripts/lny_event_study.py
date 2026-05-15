@@ -6,19 +6,23 @@ Three additional analyses around the Lunar New Year hypothesis:
      to test whether the seasonality is intrinsic to cherries or specific to China.
 """
 import time
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import requests
 
-OUT = "/Users/tanviparsam/Downloads/University/Semester4/Macroeconomics-Term_Paper"
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+CHARTS = ROOT / "charts"
+DATA.mkdir(exist_ok=True); CHARTS.mkdir(exist_ok=True)
 URL = "https://comtradeapi.un.org/public/v1/preview/C/M/HS"
 
 LNY_MONTH = {2018: 2, 2019: 2, 2020: 1, 2021: 2, 2022: 2, 2023: 1, 2024: 2, 2025: 1}
 LNY_DAY = {2018: 47, 2019: 36, 2020: 25, 2021: 43, 2022: 32, 2023: 22, 2024: 41, 2025: 29}  # day-of-year
 
 # --- 1+2: use existing monthly China-from-Chile data ---
-ch = pd.read_csv(f"{OUT}/cherries_monthly.csv")
+ch = pd.read_csv(DATA / "cherries_monthly.csv")
 ch["lny_month"] = ch["year"].map(LNY_MONTH)
 ch["months_from_lny"] = ch["month"] - ch["lny_month"]
 # wrap: trade in Nov/Dec for an LNY in Feb is at -3/-2; trade in Oct after LNY in Jan is at +9 (drop these)
@@ -76,7 +80,7 @@ for year in range(2020, 2025):
     print(f"  done USA {year}")
 
 us = pd.DataFrame(us_rows)
-us.to_csv(f"{OUT}/cherries_chile_to_usa_monthly.csv", index=False)
+us.to_csv(DATA / "cherries_chile_to_usa_monthly.csv", index=False)
 print(f"\nUSA: {len(us)} rows, total = ${us['value_usd'].sum()/1e6:,.1f}M")
 print(us.groupby("year")["value_usd"].sum().apply(lambda x: f"${x/1e6:.1f}M").to_string())
 
@@ -174,6 +178,6 @@ ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
 plt.suptitle("Empirical evidence: Chilean cherry exports are a Lunar New Year industry",
              fontsize=13, fontweight="bold", y=1.00)
 plt.tight_layout()
-plt.savefig(f"{OUT}/chart8_lny_evidence.png", dpi=180)
+plt.savefig(CHARTS / "chart8_lny_evidence.png", dpi=180)
 plt.close()
 print("\nSaved chart8_lny_evidence.png")

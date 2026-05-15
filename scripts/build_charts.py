@@ -2,15 +2,19 @@
 Combines Chile-exporter and China-importer data, fills gaps with whichever side reported,
 then produces tidy tables + initial charts for the term paper.
 """
+from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
-OUT = "/Users/tanviparsam/Downloads/University/Semester4/Macroeconomics-Term_Paper"
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+CHARTS = ROOT / "charts"
+DATA.mkdir(exist_ok=True); CHARTS.mkdir(exist_ok=True)
 
 # --- combine all cherry HS codes from each side, take total per (year, partner) ---
-chile_raw = pd.read_csv(f"{OUT}/cherries_raw.csv")
-china_raw = pd.read_csv(f"{OUT}/cherries_mirror_raw.csv")
+chile_raw = pd.read_csv(DATA / "cherries_raw.csv")
+china_raw = pd.read_csv(DATA / "cherries_mirror_raw.csv")
 
 chile_agg = (chile_raw.groupby(["year", "partner_name"], as_index=False)
                        .agg(chile_side_usd=("value_usd", "sum"),
@@ -42,12 +46,12 @@ chw = china_agg[china_agg["partner_name"] == "World_imports_china"][["year", "ch
 summary = bi.merge(cw, on="year", how="outer").merge(chw, on="year", how="outer").sort_values("year")
 summary["china_share_of_chile_exports_pct"] = 100 * summary["bilateral_usd"] / summary["chile_to_world_usd"]
 summary["chile_share_of_china_imports_pct"] = 100 * summary["bilateral_usd"] / summary["china_from_world_usd"]
-summary.to_csv(f"{OUT}/cherries_combined.csv", index=False)
+summary.to_csv(DATA / "cherries_combined.csv", index=False)
 print("Saved cherries_combined.csv")
 print(summary.to_string(index=False))
 
 # --- macro ---
-macro = pd.read_csv(f"{OUT}/macro_summary.csv")
+macro = pd.read_csv(DATA / "macro_summary.csv")
 china_macro = macro[macro["country"] == "China"][["year", "GDP_per_capita_USD", "GDP_growth_pct", "Imports_pct_GDP"]]
 chile_macro = macro[macro["country"] == "Chile"][["year", "GDP_per_capita_USD", "Exports_pct_GDP", "GDP_USD"]]
 
@@ -68,7 +72,7 @@ for _, r in data1.iterrows():
 ax.text(2006.2, ax.get_ylim()[1]*0.92, "China-Chile FTA\n(in force 2006)", fontsize=8, color="#555",
         bbox=dict(boxstyle="round", fc="#f4ecd8", ec="#aaa"))
 plt.tight_layout()
-plt.savefig(f"{OUT}/chart1_bilateral_value.png", dpi=180)
+plt.savefig(CHARTS / "chart1_bilateral_value.png", dpi=180)
 plt.close()
 print("Saved chart1_bilateral_value.png")
 
@@ -91,7 +95,7 @@ ax.grid(alpha=0.3)
 ax.legend(loc="lower right", frameon=False)
 ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
 plt.tight_layout()
-plt.savefig(f"{OUT}/chart2_shares.png", dpi=180)
+plt.savefig(CHARTS / "chart2_shares.png", dpi=180)
 plt.close()
 print("Saved chart2_shares.png")
 
@@ -110,7 +114,7 @@ ax.set_xlabel("Year")
 ax.grid(axis="y", alpha=0.3)
 ax.spines["top"].set_visible(False); ax2.spines["top"].set_visible(False)
 plt.tight_layout()
-plt.savefig(f"{OUT}/chart3_vs_gdp.png", dpi=180)
+plt.savefig(CHARTS / "chart3_vs_gdp.png", dpi=180)
 plt.close()
 print("Saved chart3_vs_gdp.png")
 
@@ -119,6 +123,6 @@ final = summary[["year", "bilateral_usd", "chile_to_world_usd", "china_from_worl
                  "china_share_of_chile_exports_pct", "chile_share_of_china_imports_pct"]].copy()
 final.columns = ["year", "Chile->China (USD)", "Chile->World (USD)", "China<-World (USD)",
                  "China % of Chile exports", "Chile % of China imports"]
-final.to_csv(f"{OUT}/cherries_FINAL.csv", index=False)
+final.to_csv(DATA / "cherries_FINAL.csv", index=False)
 print("\n=== FINAL TABLE ===")
 print(final.to_string(index=False))

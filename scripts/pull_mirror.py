@@ -3,10 +3,13 @@ Mirror data: China as reporter, importing cherries from Chile and from the World
 Used to cross-check the Chile-side numbers.
 """
 import time
+from pathlib import Path
 import pandas as pd
 import requests
 
-OUT = "/Users/tanviparsam/Downloads/University/Semester4/Macroeconomics-Term_Paper"
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+DATA.mkdir(exist_ok=True)
 URL = "https://comtradeapi.un.org/public/v1/preview/C/A/HS"
 
 CHINA = 156
@@ -52,7 +55,7 @@ dfs.append(fetch(CHINA, WORLD, "080920", years_old))
 
 df = pd.concat(dfs, ignore_index=True)
 df["partner_name"] = df["partner"].map({CHILE: "Chile", WORLD: "World"})
-df.to_csv(f"{OUT}/cherries_mirror_raw.csv", index=False)
+df.to_csv(DATA / "cherries_mirror_raw.csv", index=False)
 print(f"\nSaved cherries_mirror_raw.csv ({len(df)} rows)")
 
 agg = (df.groupby(["year", "partner_name"], as_index=False)
@@ -61,5 +64,5 @@ piv = agg.pivot(index="year", columns="partner_name", values="value_usd").reset_
 piv.columns.name = None
 piv = piv.rename(columns={"Chile": "imports_from_chile_usd", "World": "imports_from_world_usd"})
 piv["chile_share_pct"] = 100 * piv["imports_from_chile_usd"] / piv["imports_from_world_usd"]
-piv.to_csv(f"{OUT}/cherries_mirror_summary.csv", index=False)
+piv.to_csv(DATA / "cherries_mirror_summary.csv", index=False)
 print(piv.to_string(index=False))

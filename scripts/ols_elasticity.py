@@ -3,21 +3,25 @@ OLS regression: income elasticity of demand for Chilean cherries in China.
 Model:  log(cherry_imports_t) = alpha + beta * log(China_GDP_per_capita_t) + eps_t
 Slope (beta) is the income elasticity of demand. beta > 1 => luxury good.
 """
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 
-OUT = "/Users/tanviparsam/Downloads/University/Semester4/Macroeconomics-Term_Paper"
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+CHARTS = ROOT / "charts"
+CHARTS.mkdir(exist_ok=True)
 
 # --- assemble the dataset ---
-cherries = pd.read_csv(f"{OUT}/cherries_FINAL.csv")
+cherries = pd.read_csv(DATA / "cherries_FINAL.csv")
 cherries = cherries.rename(columns={
     "Chile->China (USD)": "imports_usd",
     "Chile->World (USD)": "chile_world",
     "China<-World (USD)": "china_world",
 })
-macro = pd.read_csv(f"{OUT}/macro_summary.csv")
+macro = pd.read_csv(DATA / "macro_summary.csv")
 china = macro[macro["country"] == "China"][["year", "GDP_per_capita_USD"]].rename(
     columns={"GDP_per_capita_USD": "china_gdp_pc"})
 
@@ -72,6 +76,6 @@ ax.legend(loc="upper left", frameon=False)
 ax.grid(alpha=0.3)
 ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
 plt.tight_layout()
-plt.savefig(f"{OUT}/chart4_ols_elasticity.png", dpi=180)
+plt.savefig(CHARTS / "chart4_ols_elasticity.png", dpi=180)
 plt.close()
 print("\nSaved chart4_ols_elasticity.png")
