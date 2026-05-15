@@ -1,0 +1,25 @@
+# Assignment PDF — professor's IP, not redistributed
+Term paper_JJT_April2026.pdf
+
+# Personal chat / scratch notes
+cherry_chat.md
+
+# Local Claude / IDE state
+.claude/
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Editor backups
+*.swp
+*~
