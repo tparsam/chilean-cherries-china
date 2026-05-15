@@ -13,58 +13,68 @@ The paper itself is a separate document. This repository contains the underlying
 - An average of **~92% of annual cherry trade lands in the December–February window**, with **January alone capturing more than half** of an entire year's flow.
 - A counterfactual comparison with Chile's cherry exports to the United States shows a **+18 percentage-point excess in January** and **−20 pp deficit in December** for the China market — a clean isolation of the Lunar New Year cultural effect.
 
-## Repository contents
+## Repository layout
 
-### Scripts (reproducible)
+```
+chilean-cherries-china/
+├── README.md             (this file)
+├── requirements.txt
+├── scripts/              reproducible Python scripts
+├── data/                 raw and processed CSVs
+├── charts/               PNG figures
+└── notes/                analytical notes + reference list
+```
+
+### `scripts/` — reproducible Python
 
 | File | What it does |
 |---|---|
-| `pull_data.py` | Pulls Chile-as-reporter cherry exports (HS 080920 / 080921 / 080929) to China and to the world, 2005–2024, plus World Bank macro indicators for Chile and China |
-| `pull_mirror.py` | Pulls China-as-reporter cherry imports from Chile and from the world (mirror statistics for cross-check) |
-| `pull_monthly.py` | Pulls monthly China-from-Chile cherry imports, 2018–2025, and builds the seasonality charts |
-| `build_charts.py` | Combines the Chile-side and China-side data, fills gaps, computes share ratios, builds the first three charts |
-| `ols_elasticity.py` | OLS regression of (log) cherry imports on (log) China per capita GDP → income elasticity |
-| `svd_analysis.py` | Pulls Chile→all countries cherry exports, builds the country×year matrix, runs SVD, produces the variance / loading visualisations |
-| `lny_event_study.py` | Event study aligning every year to its Lunar New Year date; Herfindahl concentration measures; counterfactual comparison to Chile→USA cherry exports |
+| [`pull_data.py`](scripts/pull_data.py) | Pulls Chile-as-reporter cherry exports (HS 080920 / 080921 / 080929) to China and to the world, 2005–2024, plus World Bank macro indicators for Chile and China |
+| [`pull_mirror.py`](scripts/pull_mirror.py) | Pulls China-as-reporter cherry imports from Chile and from the world (mirror statistics for cross-check) |
+| [`pull_monthly.py`](scripts/pull_monthly.py) | Pulls monthly China-from-Chile cherry imports, 2018–2025, and builds the seasonality charts |
+| [`build_charts.py`](scripts/build_charts.py) | Combines the Chile-side and China-side data, fills gaps, computes share ratios, builds the first three charts |
+| [`ols_elasticity.py`](scripts/ols_elasticity.py) | OLS regression of (log) cherry imports on (log) China per capita GDP → income elasticity |
+| [`svd_analysis.py`](scripts/svd_analysis.py) | Pulls Chile→all countries cherry exports, builds the country×year matrix, runs SVD, produces the variance / loading visualisations |
+| [`lny_event_study.py`](scripts/lny_event_study.py) | Event study aligning every year to its Lunar New Year date; Herfindahl concentration measures; counterfactual comparison to Chile→USA cherry exports |
 
-### Data (CSV)
+### `data/` — CSVs
 
 | File | Description |
 |---|---|
-| `cherries_raw.csv` | Chile-reported exports, all HS codes, China + World |
-| `cherries_mirror_raw.csv` | China-reported imports, all HS codes, Chile + World |
-| `cherries_FINAL.csv` | Combined annual series — best estimate per year |
-| `cherries_combined.csv` | Intermediate combined table with both sides shown |
-| `cherries_summary.csv` | First-pass summary (superseded by FINAL) |
-| `cherries_mirror_summary.csv` | First-pass mirror summary |
-| `cherries_all_destinations.csv` | Chile's cherry exports to every reported destination, 2010–2024 |
-| `cherries_matrix.csv` | The 46×15 country × year matrix decomposed via SVD |
-| `cherries_monthly.csv` | Monthly China-from-Chile cherry imports, 2018–2025 |
-| `cherries_chile_to_usa_monthly.csv` | Monthly Chile→USA cherry exports, 2020–2024 (counterfactual) |
-| `macro_raw.csv` | World Bank WDI series, long format |
-| `macro_summary.csv` | Same data, wide format |
+| [`cherries_raw.csv`](data/cherries_raw.csv) | Chile-reported exports, all HS codes, China + World |
+| [`cherries_mirror_raw.csv`](data/cherries_mirror_raw.csv) | China-reported imports, all HS codes, Chile + World |
+| [`cherries_FINAL.csv`](data/cherries_FINAL.csv) | Combined annual series — best estimate per year |
+| [`cherries_combined.csv`](data/cherries_combined.csv) | Intermediate combined table with both sides shown |
+| [`cherries_summary.csv`](data/cherries_summary.csv) | First-pass summary (superseded by FINAL) |
+| [`cherries_mirror_summary.csv`](data/cherries_mirror_summary.csv) | First-pass mirror summary |
+| [`cherries_all_destinations.csv`](data/cherries_all_destinations.csv) | Chile's cherry exports to every reported destination, 2010–2024 |
+| [`cherries_matrix.csv`](data/cherries_matrix.csv) | The 46×15 country × year matrix decomposed via SVD |
+| [`cherries_monthly.csv`](data/cherries_monthly.csv) | Monthly China-from-Chile cherry imports, 2018–2025 |
+| [`cherries_chile_to_usa_monthly.csv`](data/cherries_chile_to_usa_monthly.csv) | Monthly Chile→USA cherry exports, 2020–2024 (counterfactual) |
+| [`macro_raw.csv`](data/macro_raw.csv) | World Bank WDI series, long format |
+| [`macro_summary.csv`](data/macro_summary.csv) | Same data, wide format |
 
-### Charts (PNG, 180 DPI)
+### `charts/` — PNG figures (180 DPI)
 
 | File | What it shows |
 |---|---|
-| `chart1_bilateral_value.png` | Bar chart: value of Chile's cherry exports to China, 2005–2024 |
-| `chart2_shares.png` | Twin lines: China's share of Chile's cherry exports; Chile's share of China's cherry imports |
-| `chart3_vs_gdp.png` | Dual-axis: Chinese GDP per capita vs cherry imports from Chile |
-| `chart4_ols_elasticity.png` | Log-log scatter + OLS fit (β = 4.20, R² = 0.98) |
-| `chart5_svd.png` | 4-panel SVD figure: scree, country loadings, year pattern, orthogonal axis |
-| `chart6_monthly_seasonality.png` | Monthly bars 2018–2025 with Lunar New Year dates marked |
-| `chart7_monthly_overlay.png` | All years overlaid by month — the universal LNY shape |
-| `chart8_lny_evidence.png` | 4-panel LNY evidence: event study, concentration, counterfactual, China-USA gap |
+| [`chart1_bilateral_value.png`](charts/chart1_bilateral_value.png) | Bar chart: value of Chile's cherry exports to China, 2005–2024 |
+| [`chart2_shares.png`](charts/chart2_shares.png) | Twin lines: China's share of Chile's cherry exports; Chile's share of China's cherry imports |
+| [`chart3_vs_gdp.png`](charts/chart3_vs_gdp.png) | Dual-axis: Chinese GDP per capita vs cherry imports from Chile |
+| [`chart4_ols_elasticity.png`](charts/chart4_ols_elasticity.png) | Log-log scatter + OLS fit (β = 4.20, R² = 0.98) |
+| [`chart5_svd.png`](charts/chart5_svd.png) | 4-panel SVD figure: scree, country loadings, year pattern, orthogonal axis |
+| [`chart6_monthly_seasonality.png`](charts/chart6_monthly_seasonality.png) | Monthly bars 2018–2025 with Lunar New Year dates marked |
+| [`chart7_monthly_overlay.png`](charts/chart7_monthly_overlay.png) | All years overlaid by month — the universal LNY shape |
+| [`chart8_lny_evidence.png`](charts/chart8_lny_evidence.png) | 4-panel LNY evidence: event study, concentration, counterfactual, China-USA gap |
 
-### Notes (Markdown)
+### `notes/` — Markdown analytical notes
 
 | File | Description |
 |---|---|
-| `DATA_NOTES.md` | Data sources, headline numbers, limitations, suggested narrative |
-| `REFERENCES.md` | Curated reference list for Level 2 analysis, organised by theme |
-| `CULTURAL_CAVEAT.md` | The cultural-engineering / Lunar New Year argument, including a draft paragraph for the paper |
-| `SVD_RESULTS.md` | Full numerical output of the SVD analysis |
+| [`DATA_NOTES.md`](notes/DATA_NOTES.md) | Data sources, headline numbers, limitations, suggested narrative |
+| [`REFERENCES.md`](notes/REFERENCES.md) | Curated reference list for Level 2 analysis, organised by theme |
+| [`CULTURAL_CAVEAT.md`](notes/CULTURAL_CAVEAT.md) | The cultural-engineering / Lunar New Year argument, including a draft paragraph for the paper |
+| [`SVD_RESULTS.md`](notes/SVD_RESULTS.md) | Full numerical output of the SVD analysis |
 
 ## Methods used
 
@@ -79,26 +89,28 @@ The paper itself is a separate document. This repository contains the underlying
 
 ## Data sources
 
-1. **UN Comtrade Public API** — `comtradeapi.un.org/public/v1/preview/` — bilateral trade in goods by HS code, annual and monthly, no API key required
-2. **World Bank World Development Indicators (WDI)** — `api.worldbank.org/v2/` — macroeconomic indicators for Chile and China
+1. **UN Comtrade** — bilateral trade in goods by HS code, annual and monthly. Browse the user-facing platform at [comtradeplus.un.org](https://comtradeplus.un.org/); the scripts hit the public preview API at `https://comtradeapi.un.org/public/v1/preview/` (no API key required for the preview endpoint).
+2. **World Bank World Development Indicators (WDI)** — macroeconomic indicators for Chile and China. Browse at [data.worldbank.org/products/wdi](https://data.worldbank.org/products/wdi); the scripts hit the indicators API at `https://api.worldbank.org/v2/` ([API docs](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation)).
 
 ## How to reproduce
 
 Tested with Python 3.11. Required packages: `pandas`, `numpy`, `requests`, `matplotlib`, `statsmodels`, `scipy`, `openpyxl`.
 
-Run scripts in this order:
+From the repo root, run scripts in this order:
 
 ```bash
-python3 pull_data.py              # base trade and macro data
-python3 pull_mirror.py            # mirror trade data
-python3 build_charts.py           # combined table + charts 1–3
-python3 ols_elasticity.py         # OLS regression + chart 4
-python3 svd_analysis.py           # SVD analysis + chart 5
-python3 pull_monthly.py           # monthly data + charts 6–7
-python3 lny_event_study.py        # LNY event study + chart 8
+pip install -r requirements.txt
+
+python3 scripts/pull_data.py          # base trade + macro data
+python3 scripts/pull_mirror.py        # mirror trade data
+python3 scripts/build_charts.py       # combined table + charts 1–3
+python3 scripts/ols_elasticity.py     # OLS regression + chart 4
+python3 scripts/svd_analysis.py       # SVD analysis + chart 5
+python3 scripts/pull_monthly.py       # monthly data + charts 6–7
+python3 scripts/lny_event_study.py    # LNY event study + chart 8
 ```
 
-Total runtime: ~5 minutes, dominated by API calls.
+Each script writes CSVs to `data/`, charts to `charts/`, and any generated notes to `notes/`. Total runtime: ~5 minutes, dominated by API calls.
 
 ## Limitations
 
